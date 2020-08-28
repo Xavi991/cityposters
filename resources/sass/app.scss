@@ -1,0 +1,198 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+body{
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.navbar-brand{
+	height: 64px;
+}
+
+.navbar-custom{
+	background-color:#FD5219 !important; //EVITAR ESTILOS BOOSTRAP
+}
+
+.logo{
+	width: 250px;
+	height: 60px;
+	/*background-color: red;*/
+}
+
+	.logo-img{
+		width: 100%;
+		height: 100%;
+		/*padding-right: 4px;*/
+	}
+
+
+.navbar-nav .nav-link{
+	font-size: 1rem !important;
+	color: #FFF !important;
+}
+
+	.fa-upload, .fa-table, .fa-user-circle-o, .fa-download{
+		color: #FFF !important;
+		font-size: 1rem;
+		padding-right: 3px;
+	}
+
+.btn-custom{
+	background-color: #010440;
+	color: #FFF;
+	font-size: 1.2rem;
+	margin-top: 2rem;
+	margin-right:auto;
+	margin-left:auto;
+	width: 150px;
+}
+
+.btn-custom:hover{
+	color: #FFF;
+}
+
+.form-check-inline{
+	margin-right:0 !important; //edito margin-right por defecto del label
+}
+
+.img-box{
+	width:200px; 
+	height:280px; 
+}
+
+.img-box:hover{
+	cursor: pointer;
+	border:2px solid black;
+	box-shadow: 4px 4px 15px rgba(0,0,0,.5);
+}
+
+	.img-box img{
+		width:100%;
+	}
+
+
+.active-img::after{
+	content:'';
+	width: 90%;
+	height:100%;
+	position: absolute;
+	top:0;
+	left:20px;
+	background-color: rgba(0,0,0,.5);
+	z-index:10;
+	background-image: url('img/stamp.png');
+	background-repeat: no-repeat;
+	background-position: 4.5em 3cm;
+}
+
+input[type="radio"]:checked + label{
+	border:2px solid black;
+	box-shadow: 4px 4px 15px rgba(0,0,0,.5);
+}
+
+
+	.icon-delete{
+		position: absolute;
+		top: -15px;
+		right: -5px;
+		z-index: 15;
+		font-size: 20px !important;
+		color: #FFF;
+		background-color: red;
+		border-radius: 50%;
+		padding: 8px;
+		cursor: pointer;
+	}
+
+.add-custom{
+	position: absolute !important;
+    right: 12px !important;
+    font-size: 40px !important;
+    top: 4px !important;
+    cursor: pointer !important;
+    color: #388E3C !important;
+}
+
+.modal-title.text-center{
+	width: 100%;
+}
+
+.empty-poster-container{
+	width: 200px; 
+	height: 200px; 
+	opacity:.3; 
+	margin-left:auto; 
+	margin-right: auto;
+}
+
+	.empty-poster-container img{
+		width: 100%
+	}
+
+.empty-poster-message{
+	font-size: 1.2rem; 
+	text-align:center; 
+	color:#B3B3B3;
+}
+
+input[type="radio"]{
+	visibility:hidden;
+}
+
+.v-notices .v-toast{
+	margin-top: 20vh !important;
+}
+
+.v-notices .v-toast .v-toast-text{
+    padding: 2rem !important;/*PARA TOCAR ESTILOS DEL TOASTR*/
+    text-align:center;
+    font-size: 1rem;
+}
+
+.no-offers-container{
+	width: 300px;
+	height: 200px; 
+	margin-left: auto; 
+	margin-right: auto;
+}
+
+.no-offers-container.sign{ 
+	height: 400px; 
+}
+
+	.no-offers-container>img{ 
+		width: 100%;
+	}
+
+	.no-offers-msg{
+		margin-top: 18vh;
+	}
+
+	.btn-download-container{
+		margin-left: auto; 
+		margin-right: auto; 
+		width: 150px;
+	}
+
+.footer{
+	margin-top: auto;
+    margin-bottom: 15px;
+    width: 100%;
+    text-align: center;
+    color: #000;
+}
+
+@media screen and (max-width: 960px){
+	.logo{
+		width: 190px;
+		height: 60px;
+	}
+}
