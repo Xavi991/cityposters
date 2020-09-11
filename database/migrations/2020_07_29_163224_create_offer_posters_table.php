@@ -32,8 +32,8 @@ class CreateOfferPostersTable extends Migration
             $table->bigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->bigInteger('offer_id')->unsigned();
-            $table->foreign('offer_id')->references('id')->on('offers');
+            $table->bigInteger('offer_header_id')->unsigned();
+            $table->foreign('offer_header_id')->references('id')->on('offer_headers');
 
             $table->timestamps();
         });

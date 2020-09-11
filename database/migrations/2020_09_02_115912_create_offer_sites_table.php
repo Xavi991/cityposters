@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCartonTypesTable extends Migration
+class CreateOfferSitesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,15 @@ class CreateCartonTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('carton_types', function (Blueprint $table) {
+        Schema::create('offer_sites', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('description');
+
+            $table->bigInteger('offer_header_id')->unsigned();
+            $table->foreign('offer_header_id')->references('id')->on('offer_headers');
+
+            $table->bigInteger('site_id');
+            $table->foreign('site_id')->references('id')->on('sites');
+
             $table->timestamps();
         });
     }
@@ -27,6 +33,6 @@ class CreateCartonTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carton_types');
+        Schema::dropIfExists('offer_sites');
     }
 }

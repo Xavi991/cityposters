@@ -26,6 +26,7 @@ class Offer_Poster extends JsonResource
             'quantity_promo'        => $this->quantity_promo,
             'group'                 => $this->group,
             'group_tittle'          => $this->group_tittle
+
             
         ];
     }

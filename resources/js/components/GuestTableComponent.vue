@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         
-        <div class="table-responsive">  
+        <div class="table-responsive" v-show="isOffer">  
             <table class="table table-bordered table-hover table-striped">
                 <thead class="thead-dark">
                     <tr>
@@ -29,6 +29,13 @@
             </table>
         </div>  
 
+        <div v-show="!isOffer">
+            <div class="no-offers-container">
+                <img :src="imgEmpty">
+            </div>
+             <h2 class="display-5 text-center no-offers-msg">AÚN NO SE HA IMPORTADO NADA</h2>
+        </div>
+
     </div>
     
 </template>
@@ -38,8 +45,11 @@
     import axios from 'axios'
 
     export default{
+        props: ['offerId'],
         data(){
             return{
+                isOffer:false,
+                imgEmpty: 'http://cityposters.com/img/cart.png',
                 offers:[]
             }
         },
@@ -49,19 +59,25 @@
         },
 
         methods:{
+
             getOfferPoster: function(){
-                let url='posters';
+                let url= '/offer-items/'+this.offerId;
 
                 axios.get(url).then(response=>{
 
                     for(let i=0; i<response.data.length; i++){
-                        this.offers.push(response.data[i]);
+                        if(response.data.length > 0){
+                            this.offers.push(response.data[i]);
+                            this.isOffer= true;
+                        }else{
+                            this.isOffer= false;
+                        }
+                        
                     }
 
-                    console.log(response.data);
 
                 }).catch(err=>{
-                    console.log(err);
+                    console.log("Error getting data :(");
                 })
             },
         }

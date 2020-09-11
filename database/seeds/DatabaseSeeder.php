@@ -83,12 +83,37 @@ class DatabaseSeeder extends Seeder
 
         ];
 
-        Site::create([
-        	'id'		=>1,
-        	'code'		=>'SLO',
-        	'description' =>'San Lorenzo',
-        	'address'	  =>'Ortiz Guerrero'
-        ]);
+        $sites=[
+            [
+                'id'            =>1,
+                'code'          =>'SLO',
+                'description'   =>'San Lorenzo',
+                'address'       =>'Ortiz Guerrero'
+            ],
+            [
+                'id'            =>2,
+                'code'          =>'CPA',
+                'description'   =>'Capiatá',
+                'address'       =>'km 23'
+            ],
+            [
+                'id'            =>3,
+                'code'          =>'ARE',
+                'description'   =>'Aregua',
+                'address'       =>'Pindolo'
+            ],
+        ];
+
+
+        // Site::create([
+        // 	'id'		=>1,
+        // 	'code'		=>'SLO',
+        // 	'description' =>'San Lorenzo',
+        // 	'address'	  =>'Ortiz Guerrero'
+        // ]);
+        foreach($sites as $site){
+            Site::create($site);
+        }
 
         foreach($users as $user){
              User::create($user);

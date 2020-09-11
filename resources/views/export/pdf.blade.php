@@ -97,6 +97,40 @@
 					word-wrap: break-word;
 				}
 
+				.descount-container{
+					position: absolute; 
+					top: 180px; 
+					left: 10px; 
+					z-index: 20; 
+					background-color: rgb(237, 22, 28);  
+					width: 70px; 
+					height: 70px; 
+					border-radius: 35px;
+				}
+					.descount-title{
+						display: block; 
+						font-size: .8rem; 
+						color:#FFF; 
+						margin-top: 11px; 
+						margin-left: 6px;
+					}
+
+					.descount-body{
+						display: block; 
+						color: #FFF; 
+						margin-left: 10px; 
+						font-size: 1.5rem; 
+						font-weight: bold;
+					}
+
+				.quantity-promo-container{
+					display: block; 
+					font-size: 3rem; 
+					font-weight:bold; 
+					text-align: center; 
+					margin-top: 40px;
+				}
+
 				.offer-price-1{
 					/*font-family: 'roboto-bold';*/
 					font-weight: bold;
@@ -189,6 +223,8 @@
 			$offersDesign=[]; //contiene los elementos 
 			$productEans=[];
 			$groups=[];
+			$descountPorcentage= [];
+			$quantityPromo= [];
 
 			$j=0;	//contador para separar de 4
 			$i=0; //indice del for para tocar de forma global
@@ -206,6 +242,8 @@
 						array_push($offersTo, $collection[$i]->date_to);
 						array_push($offersDesign, $collection[$i]->design_type);
 						array_push($groups, $collection[$i]->group_tittle);
+						array_push($descountPorcentage, $collection[$i]->descount_porcentage);
+						array_push($quantityPromo, $collection[$i]->quantity_promo);
 
 						if($collection[$i]->group_tittle == 'N'){ //VERIFICA SI HAY GRUPOS
 							array_push($productEans, $collection[$i]->ean);
@@ -221,8 +259,11 @@
 
 					@if(count($offersDescription)>0 && count($offersDescription)<5)
 						<div class="poster">
-							<img src="{{ asset('storage/'.$image[0]->image_path_name) }}">
 
+							@if( count($image) >0 )
+								<img src="{{ asset('storage/'.$image[0]->image_path_name) }}">
+							@endif
+						
 							<div class="offer-container">
 								<div class="offer">
 									@if(isset($offersDescription[0]))
@@ -240,6 +281,11 @@
 										 	</span>
 
 										@elseif($offersDesign[0] === 2) <!--DISEÑO 2-->
+											<div class="descount-container">
+												<span class="descount-title">AHORRE</span>
+												<span class="descount-body">{{$descountPorcentage[0]}}%</span>
+											</div>
+
 											<span class="offer-description offer-price-2">
 										 		<span class="guaranies">Gs</span>
 										 		<span>{{number_format($offersPrice[0], 0, "", ".")}}</span>
@@ -254,9 +300,10 @@
 													{{number_format($offersBefore[0], 0, "", ".")}}
 												</span>
 											</div>
+
 										@elseif($offersDesign[0] === 3)<!--DISEÑO 3-->
-											<span style="display: block; font-size: 3rem; font-weight:bold; text-align: center; margin-top: 40px;">
-												5 X
+											<span class="quantity-promo-container">
+												{{ $quantityPromo[0] }} X
 											</span>
 
 											<span class="offer-description offer-price-3">
@@ -313,6 +360,11 @@
 										 	</span>
 
 										@elseif($offersDesign[1] === 2) <!--DISEÑO 2-->
+											<div class="descount-container">
+												<span class="descount-title">AHORRE</span>
+												<span class="descount-body">{{$descountPorcentage[1]}}%</span>
+											</div>
+
 											<span class="offer-description offer-price-2">
 										 		<span class="guaranies">Gs</span>
 										 		<span>{{number_format($offersPrice[1], 0, "", ".")}}</span>
@@ -328,8 +380,8 @@
 												</span>
 											</div>
 										@elseif($offersDesign[1] === 3)<!--DISEÑO 3-->
-											<span style="display: block; font-size: 3rem; font-weight:bold; text-align: center; margin-top: 40px;">
-												5 X
+											<span class="quantity-promo-container">
+												{{ $quantityPromo[1] }} X
 											</span>
 
 											<span class="offer-description offer-price-3">
@@ -384,6 +436,11 @@
 										 	</span>
 
 										@elseif($offersDesign[2] === 2) <!--DISEÑO 2-->
+											<div class="descount-container">
+												<span class="descount-title">AHORRE</span>
+												<span class="descount-body">{{$descountPorcentage[2]}}%</span>
+											</div>
+
 											<span class="offer-description offer-price-2">
 										 		<span class="guaranies">Gs</span>
 										 		<span>{{number_format($offersPrice[2], 0, "", ".")}}</span>
@@ -398,9 +455,10 @@
 													{{number_format($offersBefore[2], 0, "", ".")}}
 												</span>
 											</div>
+
 										@elseif($offersDesign[2] === 3)<!--DISEÑO 3-->
-											<span style="display: block; font-size: 3rem; font-weight:bold; text-align: center; margin-top: 40px;">
-												5 X
+											<span class="quantity-promo-container">
+												{{ $quantityPromo[2] }} X
 											</span>
 
 											<span class="offer-description offer-price-3">
@@ -455,6 +513,12 @@
 										 	</span>
 
 										@elseif($offersDesign[3] === 2) <!--DISEÑO 2-->
+
+											<div class="descount-container">
+												<span class="descount-title">AHORRE</span>
+												<span class="descount-body">{{$descountPorcentage[3]}}%</span>
+											</div>
+
 											<span class="offer-description offer-price-2">
 										 		<span class="guaranies">Gs</span>
 										 		<span>{{number_format($offersPrice[3], 0, "", ".")}}</span>
@@ -470,8 +534,8 @@
 												</span>
 											</div>
 										@elseif($offersDesign[3] === 3)<!--DISEÑO 3-->
-											<span style="display: block; font-size: 3rem; font-weight:bold; text-align: center; margin-top: 40px;">
-												5 X
+											<span class="quantity-promo-container">
+												{{ $quantityPromo[3] }} X
 											</span>
 
 											<span class="offer-description offer-price-3">
@@ -526,6 +590,8 @@
 						$offersDesign=[];
 						$productEans=[];
 						$groups=[];
+						$descountPorcentage=[];
+						$quantityPromo=[];
 
 						$j=0;
 						$i= $i-1;

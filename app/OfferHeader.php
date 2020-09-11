@@ -4,11 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Offer extends Model
+class OfferHeader extends Model
 {
-     protected $fillable= [
+    protected $fillable=[
     	'date_from',
-    	'date_To',
+    	'date_to',
     	'description',
+    	'slug'
     ];
 }

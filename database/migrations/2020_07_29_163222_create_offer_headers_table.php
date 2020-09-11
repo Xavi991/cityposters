@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDescountTypesTable extends Migration
+class CreateOfferHeadersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,14 @@ class CreateDescountTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('descount_types', function (Blueprint $table) {
+        Schema::create('offer_headers', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('description');
+            $table->date('date_from');
+            $table->date('date_to');
+            $table->string('description',250);
+            $table->string('slug');
+
+            
             $table->timestamps();
         });
     }
@@ -27,6 +32,6 @@ class CreateDescountTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('descount_types');
+        Schema::dropIfExists('offer_headers');
     }
 }

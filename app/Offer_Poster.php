@@ -20,7 +20,7 @@ class Offer_Poster extends Model
         'group_tittle',
         'product_id',
     	'user_id',
-        'offer_id'
+        'offer_header_id'
     ];
 
     protected $dates = ['date_from', 'date_to'];

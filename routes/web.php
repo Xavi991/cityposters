@@ -32,14 +32,17 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('passw
 
 //INICIO
 Route::get('/', 'HomeController@index')->name('home');
-Route::get('/posters', 'HomeController@getOfferPosters');
-Route::get('/offers-date','HomeController@getOffersPage')->name('offer.date');
+Route::get('detail/{slug}','HomeController@getDetail')->name('show.detail');
+Route::get('/offer-items/{offer_id}', 'HomeController@getOfferPosters')->where('offer_id','[0-9]+');
+Route::get('/offers','HomeController@getOffersPage')->name('offers');
+Route::get('/guest-offers','HomeController@guestOffersPage')->name('offers.guest');
 
 //IMPORTACIONES - EXPORTACIONES
+Route::post('create-offer', 'HomeController@createOfferHeader')->name('offers.create.header');
 Route::post('import-excel', 'HomeController@importExcel')->name('offers.import');
 Route::post('import-image', 'HomeController@importImage')->name('images.import');
-Route::get('stream-pdf','HomeController@streamPdf')->name('stream.poster');
-Route::get('download-pdf','HomeController@downloadPdf')->name('download.poster');
+Route::get('stream-pdf/{offer_id}','HomeController@streamPdf')->name('stream.poster');
+Route::get('download-pdf/{offer_id}','HomeController@downloadPdf')->name('download.poster');
  
 //ELIMINAR U OBTENER IMAGENES, DISEÑO SELECCIONADO
 Route::get('/get-image/{filename}', 'HomeController@getImage')->name('get.image');
@@ -47,5 +50,6 @@ Route::get('/delete-image/{id}', 'HomeController@destroyImage')->name('delete.im
 Route::post('/selected','HomeController@activeDesign')->name('selected.design');
 
 //ELIMINAR y ACTUALIXZAR OFERTAS VUE
-Route::delete('delete-offer/{id}','HomeController@destroyOffer');
-Route::resource('offerPoster','OfferPosterController')->only('update','store');
+Route::delete('/delete-offer/{id}','HomeController@destroyOffer');
+Route::resource('/offerPoster','OfferPosterController')->only('update','store');
+Route::get('/delete-header/{id}', 'HomeController@destroyAll')->name('destroy.header');

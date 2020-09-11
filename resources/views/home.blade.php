@@ -12,31 +12,19 @@
 
       <div class="row justify-content-center">       
           <div class="col-md-8">
-             @include('inc.form_offer')
+             <h3 class="display-5 text-center">Crear una Oferta</h3>
+
+             @include('inc.form_offer_header')
+
+             <h3 class="display-5 text-center mt-3">Importar ofertas en Oferta</h3>
+
+             @include('inc.form_import_offer')
+
+             <h3 class="display-5 text-center mt-3">Levantar Cartel(opcional)</h3>
 
              @include('inc.form_design')
           </div>
       </div>
-    @else
-      @if(count($images) == 0)
-        <div style="width: 300px; height: 200px; margin-left: auto; margin-right: auto">
-          <img src="{{ asset('img/add-image.png') }}" style="width: 100%">
-        </div>
-        <h2 class="display-5 text-center" style="margin-top: 18vh">NO HAY CARTEL PARA IMPRIMIR</h2>
-      @else
-
-        @foreach($images as $image)
-          @if($image->active)
-            <div class="no-offers-container sign">
-              <img  src="{{ route('get.image', ['filename' => $image->image_path_name]) }}">
-            </div>
-            <div class="btn-download-container">
-              <a href="{{ route('download.poster') }}" target="_blank" class="btn btn-custom">Descargar</a>
-            </div>
-          @endif
-        @endforeach
-
-      @endif
 
     @endif
 </div>

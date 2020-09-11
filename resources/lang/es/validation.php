@@ -184,7 +184,9 @@ return [
         'file'                  => 'archivo',
         'image'                 => 'imagen',
         'dateFrom'              => 'Fecha desde',
-        'dateTo'                => 'Fecha hasta'
+        'dateTo'                => 'Fecha hasta',
+        "offerHeader"           => "Ofertas",
+        "sites"                 =>"Tiendas"
 
     ],
 ];

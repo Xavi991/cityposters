@@ -1,50 +1,62 @@
 <template>
     <div class="container">
-        <div class="icon-options">
-            <span class="icon-custom pdf">
-                <a :href="parentRoute" target="_blank"><img :src="imgPDF"></a>
-            </span>
 
-            <span class="icon-custom add" data-toggle="modal" data-target="#insert-offer" @click="resetInsert">
-                <img :src="imgADD" >
-            </span>
+        <div v-show="isOffer">
+            <div class="icon-options">
+                <span class="icon-custom pdf">
+                    <a :href="parentRoute" target="_blank"><img :src="imgPdf"></a>
+                </span>
+
+                <span class="icon-custom add" data-toggle="modal" data-target="#insert-offer" @click="resetInsert">
+                    <img :src="imgAdd" >
+                </span>
+            </div> 
+
+            <div class="table-responsive">  
+                <table class="table table-bordered table-hover table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="text-center">DESDE</th>
+                            <th class="text-center">HASTA</th>
+                            <th class="text-center">DESCRIPCION</th>
+                            <th class="text-center">PRECIO ANTES</th>
+                            <th class="text-center">PRECIO AHORA</th>
+                            <th class="text-center">% DESCUENTO</th>
+                            <th class="text-center">X POR PRECIO</th>
+                            <th class="text-center">GRUPO</th>
+                            <th class="text-center">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr v-for="(item, index) in offers">
+                            <td class="text-center">{{item.date_from}}</td>
+                            <td class="text-center">{{item.date_to}}</td>
+                            <td class="text-center">{{item.description}}</td>
+                            <td class="text-center">{{item.before_price}}</td>
+                            <td class="text-center">{{item.after_price}}</td>
+                            <td class="text-center">{{item.descount_porcentage}}</td>
+                            <td class="text-center">{{item.quantity_promo}}</td>
+                            <td class="text-center">{{item.group}}</td>
+                            <td class="text-center">
+
+                                <i class="fa fa-edit fa-2x text-success action" data-toggle="modal" data-target="#edit-offer" @click="editOffer(index)"></i>
+
+                                <i class="fa fa-times-rectangle fa-2x text-danger action" data-toggle="tooltip" data-placement="top" title="Eliminar" @click="deleteOffer(item.id)"></i>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>  
         </div>
 
-        <div class="table-responsive">  
-            <table class="table table-bordered table-hover table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th class="text-center">DESDE</th>
-                        <th class="text-center">HASTA</th>
-                        <th class="text-center">DESCRIPCION</th>
-                        <th class="text-center">PRECIO ANTES</th>
-                        <th class="text-center">PRECIO AHORA</th>
-                        <th class="text-center">% DESCUENTO</th>
-                        <th class="text-center">GRUPO</th>
-                        <th class="text-center">ACCIONES</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    <tr v-for="(item, index) in offers">
-                        <td class="text-center">{{item.date_from}}</td>
-                        <td class="text-center">{{item.date_to}}</td>
-                        <td class="text-center">{{item.description}}</td>
-                        <td class="text-center">{{item.before_price}}</td>
-                        <td class="text-center">{{item.after_price}}</td>
-                        <td class="text-center">{{item.descount_porcentage}}</td>
-                        <td class="text-center">{{item.group}}</td>
-                        <td class="text-center">
-
-                            <i class="fa fa-edit fa-2x text-success action" data-toggle="modal" data-target="#edit-offer" @click="editOffer(index)"></i>
-
-                            <i class="fa fa-times-rectangle fa-2x text-danger action" data-toggle="tooltip" data-placement="top" title="Eliminar" @click="deleteOffer(item.id)"></i>
-
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>  
+        <div v-show="!isOffer">
+            <div class="no-offers-container">
+                <img :src="imgEmpty">
+            </div>
+             <h2 class="display-5 text-center no-offers-msg">AÚN NO SE HA IMPORTADO NADA</h2>
+        </div>
 
         <!--UPDATE AN OFFER -->
         <div class="modal fade" id="edit-offer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -293,11 +305,10 @@
     })
 
     export default {
-        props: ['parentRoute'],
+        props: ['parentRoute', 'offerId','imgPdf','imgAdd','imgEmpty'],
         data(){
             return {
-                imgPDF:'img/pdf.png',
-                imgADD:'img/add.png',
+                isOffer: false,
                 offers:[],
                 today: this.currentDate(),
                 //for update
@@ -345,18 +356,23 @@
             },
 
             getOfferPoster: function(){
-                let url='posters';
+                let url= '/offer-items/'+this.offerId;
 
                 axios.get(url).then(response=>{
 
                     for(let i=0; i<response.data.length; i++){
-                        this.offers.push(response.data[i]);
+                        if(response.data.length > 0){
+                            this.offers.push(response.data[i]);
+                            this.isOffer= true;
+                        }else{
+                            this.isOffer= false;
+                        }
+                        
                     }
 
-                    console.log(response.data);
 
                 }).catch(err=>{
-                    console.log(err);
+                    console.log("Error getting data :(");
                 })
             },
 
@@ -411,10 +427,11 @@
                         descount_porcentage:    this.descount_porcentage2,
                         quantity_promo:         this.quantity_promo2,
                         group:                  this.group2,
-                        group_tittle:           this.group_tittle2    
+                        group_tittle:           this.group_tittle2,
+                        offer_header_id:        this.offerId    
                     };
 
-                    var url = 'offerPoster'; 
+                    var url = '/offerPoster'; 
 
                     axios.post(url,  offer_poster).then(response => {
                        if(response.data){
@@ -456,7 +473,7 @@
                         group_tittle:           this.group_tittle    
                     };
 
-                    var url = 'offerPoster/'+this.id; 
+                    var url = '/offerPoster/'+this.id; 
 
                     axios.put(url,  offer_poster).then(response => {
                        if(response.data){
@@ -476,7 +493,7 @@
 
             deleteOffer: function($event){
 
-                const url= 'delete-offer/'+$event;
+                const url= '/delete-offer/'+$event;
 
                 axios.delete(url).then(response => {
                     this.offers=[];

@@ -41,7 +41,6 @@ class OfferPosterController extends Controller
     {
         $product_id= Product::where('barcode',$request->ean)->pluck('id')->first();
         $user_id= Auth::user()->id;
-        $offer_id= Offer::orderBy('id','DESC')->pluck('id')->first();
 
         $offerPoster= new Offer_Poster;
 
@@ -57,7 +56,7 @@ class OfferPosterController extends Controller
         $offerPoster->group_tittle=             $request->group_tittle;   
         $offerPoster->product_id=               $product_id; 
         $offerPoster->user_id=                  $user_id; 
-        $offerPoster->offer_id=                 $offer_id; 
+        $offerPoster->offer_header_id=          $request->offer_header_id;
 
         $offerPoster->save();
 

@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="{{asset('img/citymarket.ico')}}">
 
+    <!-- NONE CACHE -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -20,13 +24,17 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    
+    <!-- Styles & script-->
+    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/select2.min.js') }}" defer></script>
 
      <!-- Font Awesome JS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> 
 
 </head>
 <body>
-    <div id="app">
+    <header>
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm navbar-custom">
             <div class="container">
 
@@ -46,15 +54,18 @@
                                 <li class="nav-item">
                                     <a class="nav-link" href="{{ route('home') }}"><i class="fa fa-upload"></i>Importar</a>
                                 </li>
-                            @else
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('home') }}"><i class="fa fa-download"></i>Exportar</a>
-                                </li>
+
                             @endif
 
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('offer.date') }}"><i class="fa fa-table"></i>Ofertas de la Semana</a>
-                            </li>
+                            @if(Auth::user()->isAdmin())
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('offers') }}"><i class="fa fa-table"></i>Ofertas de la Semana</a>
+                                </li>
+                            @else
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('home') }}"><i class="fa fa-table"></i>Ofertas de la Semana</a>
+                                </li>
+                            @endif
                         </ul>
                     @endauth
 
@@ -94,7 +105,9 @@
                 </div>
             </div>
         </nav>
-        
+    </header>
+
+    <div id="app" class="main-container">
         <main class="py-4">
             @yield('content')
         </main>
@@ -116,6 +129,14 @@
         $( document ).ready(function() {
           $( "#add-image-btn" ).click(function() {
                $("#image-form").submit();
+          });
+
+          $(".js-placeholder-multiple").select2({
+                closeOnSelect : false,
+                placeholder : "Selecciona una o mas tiendas",
+                allowHtml: true,
+                allowClear: true,
+                tags: true 
           });
 
           $(".notification").delay(5000).slideUp(300);

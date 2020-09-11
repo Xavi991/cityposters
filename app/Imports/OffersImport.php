@@ -15,6 +15,12 @@ use App\Offer;
 //Implementar WithStartRow para empezar desde la 2da fila
 class OffersImport implements ToModel,WithStartRow,SkipsOnError
 {
+    private $offer_header_id=null;
+
+    public function  __construct($header_id){
+
+        $this->offer_header_id= $header_id;
+    }
 
     public function startRow(): int
     {
@@ -39,7 +45,7 @@ class OffersImport implements ToModel,WithStartRow,SkipsOnError
         $group=0;
         $group_tittle='';
         $product_id=null;
-        $offer_id= Offer::orderBy('id','DESC')->pluck('id')->first();
+        $header_id=  $this->offer_header_id;
 
         if( is_null($row[2]) ){
             $product_id=null;
@@ -91,7 +97,7 @@ class OffersImport implements ToModel,WithStartRow,SkipsOnError
             'group_tittle'          => $group_tittle,
             'product_id'            => $product_id,
             'user_id'               => Auth::user()->id,
-            'offer_id'               => $offer_id,
+            'offer_header_id'       => $header_id,
             
         ]);
         $offer_poster->save();

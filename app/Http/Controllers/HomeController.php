@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Collection;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -11,11 +12,14 @@ use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade as PDF;
 
+use Auth;
 use App\Offer_Poster;
 use App\Image;
 use App\Product;
 use App\Imports\OffersImport;
-use App\Offer;
+use App\Site;
+use App\OfferHeader;
+use App\OfferSite;
 
 use App\Http\Resources\Offer_Poster as Offer_PosterResources;
 use App\Http\Resources\Offer_PosterCollection;
@@ -38,34 +42,180 @@ class HomeController extends Controller
      * xlsx,doc,docx,ppt,pptx,ods,odt,odp
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index() //NEW
     {
-        $images= Image::get();
+        $images= Image::orderBy('id','ASC')->get();
+        $sites=  Site::select('id','description')->get();
+        $offerHeaders=  OfferHeader::select('id','description')
+                    ->where('date_to', '>=', date("Y-m-d"))->get();
 
-        return view('home')->with('images',$images);
+        if(Auth::user()->isAdmin()){
+            return view('home')
+                    ->with('offerHeaders',$offerHeaders)
+                    ->with('images',$images)
+                    ->with('sites',$sites);
+        }else{
+           $collection= $this->guestOffersPage();
+           return view('pages.guest_offer_header')->with('collection', $collection)->with('images', $images);
+        }
+       
     }
 
-    public function getOffersPage(){
-        $offer= Offer::orderBy('id','DESC')->first();
+    public function createOfferHeader(Request $request){ //NEW
+        $this->validate($request,[
+            'description'   =>'required|max:250',
+            'dateFrom'      => 'required',
+            'dateTo'        => 'required',
+            'sites'         => 'required',
+        ]);
 
-        return view('pages.offers')->with('offer',$offer);
+        $description= ucwords(strtolower($request->description));
+        $slugFormat= strtolower($request->description);
+        $slugFormat= str_slug($slugFormat)."-".rand(1,1000);
+
+        $offerHeader= new OfferHeader;
+        $offerHeader->date_from     = $request->dateFrom;
+        $offerHeader->date_to       = $request->dateTo;
+        $offerHeader->description   = $description;
+        $offerHeader->slug          = $slugFormat;
+
+        $offerHeader->save();
+
+        $offerHeader_id= OfferHeader::orderBy('id','DESC')->pluck('id')->first();//SIEMPRE EL ULLTIMO
+
+        foreach($request->sites as $site){
+            OfferSite::create([
+                'offer_header_id' =>$offerHeader_id,
+                'site_id'         =>$site  
+            ]);
+        }
+
+        return back()->with('status', 'Se ha creado la oferta correctamente!!');//NEW
     }
 
-    public function getOfferPosters(){
-        $offer_id= Offer::orderBy('id','DESC')->pluck('id')->first();
+    public function importExcel(Request $request){  //NEW
+
+        $validate= $this->validate($request,[
+            'offerHeader'   => 'required',
+            'file'          => 'required|mimes:xlsx,xls'
+        ]);
+
+        $offer_header_id= $request->input('offerHeader');
         
+        $file= $request->file('file');
+
+       
+        Excel::import(new OffersImport($offer_header_id), $file);
+
+        return back()->with('status', 'Importación de oferta completada.');
+        
+    }
+
+    public function getOffersPage(){    //NEW
+      
+        $offers= DB::table('offer_headers as h') 
+                ->select(DB::raw('h.id, h.date_from,h.date_to,h.description,h.slug'))
+                ->where('date_to', '>=', date("Y-m-d"))
+                ->get();
+
+
+        $sites= DB::table('offer_headers as h') 
+            ->join('offer_sites as m', 'm.offer_header_id', '=', 'h.id')
+            ->join('sites as s', 'm.site_id', '=', 's.id')
+            ->select(DB::raw("h.id, STRING_AGG(s.description, ',') as description2"))
+            ->where('h.date_to', '>=', date("Y-m-d"))
+            ->groupBy('h.id')
+            ->get();
+
+        $collection= new Collection; //crear coleccion vacia
+
+       if(count($offers)){
+            for ($i=0; $i<count($offers); $i++) { //UNIR COLECIONES POR ID
+                $valor=null;
+
+                if($offers[$i]->id == $sites[$i]->id){
+                    $valor= collect($offers[$i])->put('sites', $sites[$i]->description2);
+                    $collection->push($valor);
+                }
+            }
+       }
+
+        return view('pages.offer_header')->with('collection',$collection);
+    }
+
+    public function guestOffersPage(){ //NEW
+        $site_id= Auth::user()->site_id;
+        
+        $offers= DB::table('offer_headers as h') 
+                 ->join('offer_sites as m', 'm.offer_header_id', '=', 'h.id')
+                ->select(DB::raw('h.id, h.date_from,h.date_to,h.description,h.slug'))
+                ->where('m.site_id', $site_id)
+                ->where('date_to', '>=', date("Y-m-d"))
+                ->get();
+
+
+        $site= DB::table('offer_headers as h') 
+            ->join('offer_sites as m', 'm.offer_header_id', '=', 'h.id')
+            ->join('sites as s', 'm.site_id', '=', 's.id')
+            ->select(DB::raw("h.id, s.description"))
+            ->where('m.site_id', $site_id)
+            ->where('h.date_to', '>=', date("Y-m-d"))
+            ->get();
+
+        $collection= new Collection; //crear coleccion vacia
+
+       if(count($offers)){
+            for ($i=0; $i<count($offers); $i++) { //UNIR COLECIONES POR ID
+                $valor=null;
+
+                if($offers[$i]->id == $site[$i]->id){
+                    $valor= collect($offers[$i])->put('site', $site[$i]->description);
+                    $collection->push($valor);
+                }
+            }
+       }
+
+        return $collection;
+    }
+
+    public function getOfferPosters($offer_id){ //NEW
+      
         return response()->json(
             new Offer_PosterCollection(
-                Offer_Poster::where('offer_id',$offer_id)->get()
+                Offer_Poster::where('offer_header_id',$offer_id)->get()
             )
-        );
+        )  ;
 
+    }
+
+    public function getDetail($slug){    //NEw
+        $offerHeader= OfferHeader::where('slug',$slug)
+                ->where('date_to', '>=', date("Y-m-d"))->first();
+
+
+        return view('pages.offer_detail')->with('offerHeader',$offerHeader);
     }
 
     public function destroyOffer($id){
 
         $offer= Offer_Poster::findOrFail($id);
         $offer->delete();
+    }
+
+    public function destroyAll($id){ //NEW
+        $offers= Offer_Poster::where('offer_header_id',$id)->get();
+        $offerHeader= OfferHeader::find($id);
+
+       if(count($offers) > 0){
+            DB::table('offer_posters')->where('offer_header_id', $id)->delete();
+            DB::table('offer_sites')->where('offer_header_id', $id)->delete();
+            $offerHeader->delete();
+        }else{
+            DB::table('offer_sites')->where('offer_header_id', $id)->delete();
+            $offerHeader->delete();
+        }
+
+        return back()->with('status', 'La oferta se eliminó correctamente!!');
     }
 
     public function importImage(Request $request){
@@ -135,37 +285,7 @@ class HomeController extends Controller
         
     }
 
-    public function importExcel(Request $request){
-
-        $validate= $this->validate($request,[
-            'description'   => 'required|max:250',
-            'dateFrom'      => 'required',
-            'dateTo'        => 'required',
-            'file'          => 'required|mimes:xlsx,xls'
-        ]);
-
-        $date_from= $request->input('dateFrom');
-        $date_to= $request->input('dateTo');
-        $description= $request->input('description');
-        
-        $offer= new Offer;
-        $offer->date_from= $date_from;
-        $offer->date_to= $date_to;
-        $offer->description= $description;
-
-        $offer->save();
-
-        $file= $request->file('file');
-
-       
-        Excel::import(new OffersImport, $file);
-
-        return back()->with('status', 'Importación de oferta completada.');
-        
-        
-    }
-
-    public function streamPdf(){
+    public function streamPdf($offer_id){
         $collection= null;
         $ean_group= null;
 
@@ -173,45 +293,44 @@ class HomeController extends Controller
         $image= Image::where('active',true)->get();
 
         //ULTIMA OFERTA CREADA
-        $offer_id= Offer::orderBy('id','DESC')->pluck('id')->first();
+        // $offer_id= Offer::orderBy('id','DESC')->pluck('id')->first();
 
         //OFERTAS NORMALES
     
         $offers= DB::table('offer_posters as o') 
             ->join('products as p', 'o.product_id', '=', 'p.id')
             ->select(DB::raw('o.*, p.barcode as ean'))
+            ->where('o.offer_header_id',$offer_id)
             ->where('o.group', 'like', '0')
-            ->where('o.offer_id',$offer_id)
             ->get();
-    
+        
         //OFERTAS GRUPALES ->where('o.group_tittle','like', 'T')
         $groups= DB::table('offer_posters as o') 
             ->select(DB::raw('o.*'))
+            ->where('o.offer_header_id',$offer_id)
             ->where('o.group', 'not like', '0')
             ->where('o.group_tittle', 'like', 'T')
-            ->where('o.offer_id',$offer_id)
             ->get();
 
-        if(count($groups)>0){
+        if(count($groups)>0){ //STRING_AGG(p.barcode, ',')   STRING_AGG(p.barcode, ',')
             $ean_group= DB::table('offer_posters as o')
             ->join('products as p', 'o.product_id', '=', 'p.id')
             ->select(DB::raw("o.group, STRING_AGG(p.barcode, ',') as ean"))
+            ->where('o.offer_header_id',$offer_id)
             ->where('o.group', 'not like', '0')
-            ->where('o.offer_id',$offer_id)
             ->groupBy('o.group')->get();
 
             $collection= $offers->concat($groups);
+
         }else{
             $collection= $offers;
         }
-
-        
 
         // $groups_ean_merge= $groups->map(function ($item, $key) {
 
         //     $ean_group= DB::table('offer_posters as o')
         //     ->join('products as p', 'o.product_id', '=', 'p.id')
-        //     ->select(DB::raw('o.group, GROUP_CONCAT(p.barcode) as ean'))
+        //     ->select(DB::raw('o.group, STRING_AGG(p.barcode, ',') as ean'))
         //     ->where('o.group', 'not like', '0')
         //     ->where('o.group',$item->group)
         //     ->groupBy('o.group')->get();
@@ -223,43 +342,40 @@ class HomeController extends Controller
 
         $pdf = PDF::loadView('export.pdf', compact('image','collection','ean_group'));
         return $pdf->stream();
-        //return $pdf->download('OFERTAS.pdf');
+        
     }
 
 
-    public function downloadPdf(){
+    public function downloadPdf($offer_id){
         $collection= null;
         $ean_group= null;
 
-        //CARTEL ACTIVO
-        $image= Image::where('active',true)->get();
-
-        //ULTIMA OFERTA CREADA
-        $offer_id= Offer::orderBy('id','DESC')->pluck('id')->first();
+        //CARTEL ACTIVO- SIN CARTEL PARA IMPRIMIR
+        $image= [];
 
         //OFERTAS NORMALES
     
         $offers= DB::table('offer_posters as o') 
             ->join('products as p', 'o.product_id', '=', 'p.id')
             ->select(DB::raw('o.*, p.barcode as ean'))
+            ->where('o.offer_header_id',$offer_id)
             ->where('o.group', 'like', '0')
-            ->where('o.offer_id',$offer_id)
             ->get();
-    
+        
         //OFERTAS GRUPALES ->where('o.group_tittle','like', 'T')
         $groups= DB::table('offer_posters as o') 
             ->select(DB::raw('o.*'))
+            ->where('o.offer_header_id',$offer_id)
             ->where('o.group', 'not like', '0')
             ->where('o.group_tittle', 'like', 'T')
-            ->where('o.offer_id',$offer_id)
             ->get();
 
-        if(count($groups)>0){
+        if(count($groups)>0){ //STRING_AGG(p.barcode, ',')
             $ean_group= DB::table('offer_posters as o')
             ->join('products as p', 'o.product_id', '=', 'p.id')
             ->select(DB::raw("o.group, STRING_AGG(p.barcode, ',') as ean"))
+            ->where('o.offer_header_id',$offer_id)
             ->where('o.group', 'not like', '0')
-            ->where('o.offer_id',$offer_id)
             ->groupBy('o.group')->get();
 
             $collection= $offers->concat($groups);
@@ -267,24 +383,7 @@ class HomeController extends Controller
             $collection= $offers;
         }
 
-        
-
-        // $groups_ean_merge= $groups->map(function ($item, $key) {
-
-        //     $ean_group= DB::table('offer_posters as o')
-        //     ->join('products as p', 'o.product_id', '=', 'p.id')
-        //     ->select(DB::raw('o.group, GROUP_CONCAT(p.barcode) as ean'))
-        //     ->where('o.group', 'not like', '0')
-        //     ->where('o.group',$item->group)
-        //     ->groupBy('o.group')->get();
-
-        //     return collect($item)->merge($ean_group);
-        // });
-
-         // dd($ean_group);
-
         $pdf = PDF::loadView('export.pdf', compact('image','collection','ean_group'));
         return $pdf->download("OFERTAS.pdf");
-        //return $pdf->download('OFERTAS.pdf');
     }
 }
