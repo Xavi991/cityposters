@@ -107,12 +107,11 @@
         </nav>
     </header>
 
-    <div id="app" class="main-container">
-        <main class="py-4">
+    <main class="main-container">
+        <div id="app">
             @yield('content')
-        </main>
-
-    </div>
+        </div>
+    </main>
 
     <footer class="footer"> 
          Copyright © 2014-{{ Date('Y') }} | PRV STORES PY SA | All Rights Reserved.
@@ -131,17 +130,36 @@
                $("#image-form").submit();
           });
 
-          $(".js-placeholder-multiple").select2({
-                closeOnSelect : false,
-                placeholder : "Selecciona una o mas tiendas",
-                allowHtml: true,
-                allowClear: true,
-                tags: true 
-          });
 
           $(".notification").delay(5000).slideUp(300);
 
-        });
+
+            function RunSelect2(){
+              $('#sites').select2({
+                 placeholder : "Selecciona una o mas tiendas",
+                 allowClear: true,
+                 closeOnSelect: false,
+                 allowClear: true,
+                 tags: true 
+              }).on('select2:open', function() {  
+
+                setTimeout(function() {
+                    $(".select2-results__option .select2-results__group").bind( "click", selectAlllickHandler ); 
+                }, 0);
+
+              });
+            }
+
+            RunSelect2();
+
+
+            var selectAlllickHandler = function() {
+                $(".select2-results__option .select2-results__group").unbind( "click", selectAlllickHandler );        
+              $('#sites').select2('destroy').find('option').prop('selected', 'selected').end();
+              RunSelect2();
+            };  
+
+        });//fin
 
 
     </script>
@@ -149,3 +167,4 @@
 </html>
 
 
+            

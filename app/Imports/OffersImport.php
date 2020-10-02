@@ -46,12 +46,17 @@ class OffersImport implements ToModel,WithStartRow,SkipsOnError
         $group_tittle='';
         $product_id=null;
         $header_id=  $this->offer_header_id;
+        $group_code= '0';
 
         if( is_null($row[2]) ){
             $product_id=null;
 
         }else{
-            $product_id= Product::where('barcode', $row[2])->first()->id;
+            $product_id= Product::where('barcode', $row[2])->pluck('id')->first();
+
+            if(is_null($product_id)){
+                $product_id=0;
+            }
         }
 
         if( is_null($row[5]) ){
@@ -84,6 +89,12 @@ class OffersImport implements ToModel,WithStartRow,SkipsOnError
             $group_tittle= 'T';
         }
 
+        if( is_null($row[11]) ){
+            $group_code='0';
+        }else{
+            $group_code= $row[11];
+        }
+
         $offer_poster =  new Offer_Poster([
             'date_from'     => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[0])->format('Y-m-d'),
             'date_to'       => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[1])->format('Y-m-d'),
@@ -95,10 +106,10 @@ class OffersImport implements ToModel,WithStartRow,SkipsOnError
             'design_type'           => $row[8],
             'group'                 => $group,
             'group_tittle'          => $group_tittle,
+            'group_code'            => $group_code,
             'product_id'            => $product_id,
             'user_id'               => Auth::user()->id,
-            'offer_header_id'       => $header_id,
-            
+            'offer_header_id'       => $header_id
         ]);
         $offer_poster->save();
 

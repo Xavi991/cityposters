@@ -10,7 +10,7 @@
     @endif
 
 	@if(count($collection)>0)
-		<h2 class="display-5 text-center mt-1">
+		<h2 class="display-5 text-center mt-3 mb-3">
 	       Ofertas de la Semana
 	    </h2>
 
@@ -31,11 +31,16 @@
 					      	<p class="card-text"><strong>Nombre: </strong>{{$item["description"]}}</p>
 							
 					        <p class="card-text">
-					        	<strong>Tienda/s:</strong>
-					        	{{$item["sites"]}}
+					  
+					        	<div style="width:100%; height: 40px;" class="overflow-auto">
+					        		<strong>Tienda/s:</strong>
+					        		{{$item["sites"]}} 
+					        	</div>
+
 					        </p>
+
 					        <p class="card-text">
-					        	<strong>Duración: </strong>
+					        	<strong>Vigencia: </strong>
 					        	<small class="text-muted">
 					        		Del {{ date_format(new DateTime($item["date_from"]),"d/m/Y") }}
 					        		al {{ date_format(new DateTime($item["date_to"]),"d/m/Y") }} 

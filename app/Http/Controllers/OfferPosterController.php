@@ -40,6 +40,11 @@ class OfferPosterController extends Controller
     public function store(Request $request)
     {
         $product_id= Product::where('barcode',$request->ean)->pluck('id')->first();
+
+        if(IS_NULL( $product_id )){
+            $product_id=0;
+        }
+
         $user_id= Auth::user()->id;
 
         $offerPoster= new Offer_Poster;
@@ -53,7 +58,8 @@ class OfferPosterController extends Controller
         $offerPoster->descount_porcentage=      $request->descount_porcentage;
         $offerPoster->quantity_promo=           $request->quantity_promo;
         $offerPoster->group=                    $request->group;
-        $offerPoster->group_tittle=             $request->group_tittle;   
+        $offerPoster->group_tittle=             $request->group_tittle; 
+        $offerPoster->group_code=               $request->group_code;   
         $offerPoster->product_id=               $product_id; 
         $offerPoster->user_id=                  $user_id; 
         $offerPoster->offer_header_id=          $request->offer_header_id;
@@ -94,6 +100,7 @@ class OfferPosterController extends Controller
      */
     public function update(Request $request, $id)
     {
+        
         $offerPoster= Offer_Poster::find($id);
 
         $offerPoster->date_from=                $request->date_from;            
@@ -105,7 +112,8 @@ class OfferPosterController extends Controller
         $offerPoster->descount_porcentage=      $request->descount_porcentage;
         $offerPoster->quantity_promo=           $request->quantity_promo;
         $offerPoster->group=                    $request->group;
-        $offerPoster->group_tittle=             $request->group_tittle;   
+        $offerPoster->group_tittle=             $request->group_tittle;  
+        $offerPoster->group_code=               $request->group_code; 
 
         $offerPoster->update(); 
 

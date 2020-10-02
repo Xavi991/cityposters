@@ -50,7 +50,7 @@
                     </div>
                 @endforeach
                 <div class="form-group row mb-0">
-                    <div class="col-md-8 offset-md-5">
+                    <div class="center-btn">
                         <button type="submit" class="btn btn-custom">
                             Usar
                         </button>

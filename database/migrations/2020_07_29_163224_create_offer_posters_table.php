@@ -25,6 +25,7 @@ class CreateOfferPostersTable extends Migration
             $table->smallInteger('quantity_promo');
             $table->string('group');
             $table->string('group_tittle',1);
+            $table->string('group_code');
 
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->foreign('product_id')->references('id')->on('products');

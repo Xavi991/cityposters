@@ -18,6 +18,7 @@ class Offer_Poster extends Model
     	'design_type', 
         'group', 
         'group_tittle',
+        'group_code',
         'product_id',
     	'user_id',
         'offer_header_id'

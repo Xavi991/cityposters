@@ -48,12 +48,13 @@
             <div class="form-group">
                 <label for="sites">Tienda/s</label>
                 <select class="js-placeholder-multiple js-states form-control" multiple="multiple" id="sites" name="sites[]">
-                    @foreach($sites as $site)
-                        <option value="{{$site->id}}" data-badge="">
-                            {{$site->description}}
-                        </option>
-                    @endforeach
-                    
+                    <optgroup label="Seleccionar todo">
+                        @foreach($sites as $site)
+                            <option value="{{$site->id}}" data-badge="">
+                                {{$site->description}}
+                            </option>
+                        @endforeach
+                    </optgroup>
                 </select>
 
                 @error('sites')
@@ -64,7 +65,7 @@
             </div>
 
             <div class="form-group row mb-0">
-                <div class="col-md-8 offset-md-5">
+                <div class="center-btn">
                     <button type="submit" class="btn btn-custom">
                         Crear Oferta
                     </button>

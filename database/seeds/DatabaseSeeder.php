@@ -50,15 +50,41 @@ class DatabaseSeeder extends Seeder
 
             [
                 'id'    =>60,
-                'barcode' =>'2004081000000',
-                'description' => 'YOGOURT SACHET 500ML VAINILLA'
+                'barcode' =>'7840037014334',
+                'description' => 'YOGHURT KISSI GURT '
             ],
 
             [
                 'id'    =>70,
-                'barcode' =>'2004082000000',
-                'description' => 'YOGOURT SACHET 500ML FRUTILLA'
-            ]
+                'barcode' =>'7840037014365',
+                'description' => 'YOGHURT KISSI GURT  DURAZNO SACHET 1 LT'
+            ],
+            [
+                'id'    =>80,
+                'barcode' =>'7840037014372',
+                'description' => 'YOGHURT KISSI GURT  BANANA SACHET 1 LT'
+            ],
+            [
+                'id'    =>90,
+                'barcode' =>'7897736409848',
+                'description' => 'VODKA MIKS ICE LIMON/JENGIBRE'
+            ],
+            [
+                'id'    =>100,
+                'barcode' =>'7897736409800',
+                'description' => 'VODKA MIKS ICE FRUTILLA/KIWI Y'
+            ],
+            [
+                'id'    =>110,
+                'barcode' =>'7840821000956',
+                'description' => 'EXTRACTO DE TOMATE BON GUSTO 70 GR'
+            ],
+            [
+                'id'    =>120,
+                'barcode' =>'7840024005239',
+                'description' => 'FIDEOS TALLARIN AMARILLO GRUESO FEDERAL 400 GR'
+            ],
+
 
     	];
 
@@ -105,12 +131,12 @@ class DatabaseSeeder extends Seeder
         ];
 
 
-        // Site::create([
-        // 	'id'		=>1,
-        // 	'code'		=>'SLO',
-        // 	'description' =>'San Lorenzo',
-        // 	'address'	  =>'Ortiz Guerrero'
-        // ]);
+        Product::create([ //CASO NO ESXISTA EAN PRODUCTO
+        	'id'           =>0,
+            'barcode'      =>'XXX',
+            'description'  => 'NO EXISTE EN LA BD'
+        ]);
+
         foreach($sites as $site){
             Site::create($site);
         }

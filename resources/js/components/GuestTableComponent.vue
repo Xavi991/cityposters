@@ -45,7 +45,7 @@
     import axios from 'axios'
 
     export default{
-        props: ['offerId'],
+        props: ['offerId','imgEmpty'],
         data(){
             return{
                 isOffer:false,

@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container mb-4">
 
         <div v-show="isOffer">
             <div class="icon-options">
@@ -86,6 +86,7 @@
 
                             <input type="date" class="form-control" id="dateTo" placeholder="Escriba la fecha dd/mm/yyyy" :min="today" v-model="date_to">
                         </div>
+
                     </div>
 
                      <!--DESCRIPTION-->
@@ -112,17 +113,24 @@
                     </div>
 
                     <div class="form-row">
-                        <div class="col-md-6 mb-2">
+                        <div class="col-md-4 mb-2">
 
                             <label for="descount">% Descuento</label>
                             <input type="number" class="form-control" id="descount" placeholder="Escriba un pocentaje" min="0" v-model="descount_porcentage">
 
                         </div>
 
-                        <div class="col-md-6 mb-2">
+                        <div class="col-md-4 mb-2">
 
                             <label for="quantity">X por precio</label>
                             <input type="number" class="form-control" id="quantity" placeholder="Escriba  un numero" min="0" v-model="quantity_promo">
+
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+
+                            <label for="group_code">Código Corto </label>
+                            <input type="number" class="form-control" id="group_code" placeholder="Escriba el número" min="0" v-model="group_code">
 
                         </div>
                     </div>
@@ -136,6 +144,9 @@
                               <option value="1">1</option>
                               <option value="2">2</option>
                               <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
                             </select>
 
                         </div>
@@ -200,7 +211,7 @@
 
                         <div class="col-md-4 mb-2">
 
-                             <label for="ean">Ean <span class="text-danger">(*)</span></label>
+                            <label for="ean">Ean <span class="text-danger">(*)</span></label>
                             <input type="number" class="form-control" id="ean" placeholder="Escriba el número" min="0" v-model="ean">
 
                         </div>
@@ -230,17 +241,24 @@
                     </div>
 
                     <div class="form-row">
-                        <div class="col-md-6 mb-2">
+                        <div class="col-md-4 mb-2">
 
                             <label for="descount2">% Descuento</label>
                             <input type="number" class="form-control" id="descount2" placeholder="Escriba un número" min="0" v-model="descount_porcentage2">
 
                         </div>
 
-                        <div class="col-md-6 mb-2">
+                        <div class="col-md-4 mb-2">
 
                             <label for="quantity2">X por precio</label>
                             <input type="number" class="form-control" id="quantity2" placeholder="Escriba  un número" min="0" v-model="quantity_promo2">
+
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+
+                            <label for="group_code">Código Corto</label>
+                            <input type="number" class="form-control" id="group_code" placeholder="Escriba el número" min="0" v-model="group_code2">
 
                         </div>
                     </div>
@@ -254,6 +272,9 @@
                               <option value="1">1</option>
                               <option value="2">2</option>
                               <option value="3">3</option>
+                              <option value="4">4</option>
+                              <option value="5">5</option>
+                              <option value="6">6</option>
                             </select>
 
                         </div>
@@ -275,6 +296,7 @@
                             </select>
 
                         </div>
+
                     </div>
 
                 </form>
@@ -323,6 +345,7 @@
                 quantity_promo: null,
                 group: null,
                 group_tittle: null,
+                group_code: null,
                 //for insert
                 date_from2: null,
                 date_to2: null,
@@ -334,7 +357,8 @@
                 descount_porcentage2: null,
                 quantity_promo2: null,
                 group2: null,
-                group_tittle2: null
+                group_tittle2: null,
+                group_code2: null
                 
             }
         },
@@ -390,6 +414,7 @@
                 this.quantity_promo=        this.offers[$event].quantity_promo;
                 this.group=                 this.offers[$event].group;
                 this.group_tittle=          this.offers[$event].group_tittle;
+                this.group_code=            this.offers[$event].group_code;
 
             },
 
@@ -414,6 +439,10 @@
                         this.after_price2=0;
                     }
 
+                    if(!this.group_code2){
+                        this.group_code2=0;
+                    }
+
                     this.description2= this.description2.toUpperCase();
 
                     const offer_poster= {
@@ -428,6 +457,7 @@
                         quantity_promo:         this.quantity_promo2,
                         group:                  this.group2,
                         group_tittle:           this.group_tittle2,
+                        group_code:             this.group_code2,
                         offer_header_id:        this.offerId    
                     };
 
@@ -439,6 +469,7 @@
                             this.getOfferPoster();
                             $('#insert-offer').modal('hide');
 
+                            this.showToastr('Se agrego la oferta correctamente!','success');
                        }
                         
                     }).catch(error => {
@@ -458,6 +489,23 @@
 
                 }else{
 
+                    if(!this.descount_porcentage){
+                        this.descount_porcentage=0;
+                    }
+
+                    if(!this.quantity_promo){
+                        this.quantity_promo=0;
+                    }
+
+                    if(!this.after_price){
+                        this.after_price=0;
+                    }
+
+                    if(!this.group_code){
+                        this.group_code=0;
+                    }
+
+
                     this.description= this.description.toUpperCase();
 
                     const offer_poster= {
@@ -470,7 +518,8 @@
                         descount_porcentage:    this.descount_porcentage,
                         quantity_promo:         this.quantity_promo,
                         group:                  this.group,
-                        group_tittle:           this.group_tittle    
+                        group_tittle:           this.group_tittle,    
+                        group_code:             this.group_code 
                     };
 
                     var url = '/offerPoster/'+this.id; 
@@ -481,6 +530,7 @@
                             this.getOfferPoster();
                             $('#edit-offer').modal('hide');
 
+                            this.showToastr('Se actualizó la oferta correctamente!','success');
                        }
                         
                     }).catch(error => {
@@ -498,7 +548,7 @@
                 axios.delete(url).then(response => {
                     this.offers=[];
                     this.getOfferPoster();
-                    this.showToastr('Se eliminó correctamente!','success');
+                    this.showToastr('Se eliminó la oferta correctamente!','success');
                 });
             },
 
@@ -521,6 +571,7 @@
                 this.quantity_promo=        null;
                 this.group=                 null; 
                 this.group_tittle=          null; 
+                this.group_code=            null;
             },
 
             resetInsert: function(){
@@ -535,6 +586,7 @@
                 this.quantity_promo2=        null;
                 this.group2=                 "0"; 
                 this.group_tittle2=          "N"; 
+                this.group_code2=            "0";
             },
 
             showToastr: function(mensaje, tipo){

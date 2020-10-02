@@ -11,6 +11,45 @@ body{
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+	margin: 0;
+	padding:0;
+}
+
+.login-container{
+	padding-top: 50px;
+}
+
+	.login-box{
+		width: 450px; 
+		background-color: #1D1F2B; 
+		padding: 40px; 
+		margin-left: auto; 
+		margin-right: auto; 
+		opacity: .8;
+	}
+
+	.login-icon{
+		width: 100px; 
+		height: 100px;
+		margin: 0 auto;
+	}
+
+		.login-icon>img{
+			width: 100%
+		}
+
+	.login-btn-container{
+		width: 100%; 
+		margin-right: auto; 
+		margin-left: auto;  
+	}
+
+		.login-btn-container>button{
+			background-color: #5CD3B5
+		}
+
+.offer-detail-container{
+	padding-top: 20px;
 }
 
 .navbar-brand{
@@ -21,11 +60,11 @@ body{
 	position: fixed;
 	z-index: 20;
 	width: 100%;
-	background-color:#FD5219 !important; //EVITAR ESTILOS BOOSTRAP
+	background-color:#FD5219 !important; //EVITAR ESTILOS BOOTSTRAP
 }
 
 .main-container{
-	margin-top: 63px;
+	margin-top: 75px;
 }
 
 .logo{
@@ -231,7 +270,7 @@ input[type="radio"]{
 
 		width: 40px; 
 		height: 40px; 
-		background-color: #E9E9E9; 
+		background-color: #C4C4C4; 
 		border-radius: 50%; 
 	}
 
@@ -258,12 +297,57 @@ input[type="radio"]{
 	color:#212529; 
 }
 
+.select2-results__group
+{
+  cursor:pointer !important;
+}
+
+.row.no-gutters{
+	background-color: #F3F3F3;
+}
+
+.offer-form-box{
+	width: 100%; 
+	height: 540px; 
+	background-color:#1B242B; 
+	overflow: hidden;
+}
+
+.import-form-box{
+	width: 100%; 
+	height: 420px; 
+	background-color:#DADADA; 
+	overflow: hidden;
+}
+
+.sign-form-box{
+	width: 100%; 
+	height: 540px; 
+	background-color:#1B242B; 
+	overflow: hidden;
+}
+
 .footer{
 	margin-top: auto;
-    margin-bottom: 15px;
     width: 100%;
+    padding: 15px;
     text-align: center;
-    color: #000;
+    color: #FFF;
+    background-color: #000;
+}
+
+.text-white{
+	color: #FFF;
+}
+
+
+.text-black{
+	color: #000;
+}
+
+.center-btn{
+	margin-left: auto;
+	margin-right: auto;
 }
 
 @media screen and (max-width: 960px){
