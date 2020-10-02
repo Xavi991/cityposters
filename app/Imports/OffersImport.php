@@ -49,7 +49,7 @@ class OffersImport implements ToModel,WithStartRow,SkipsOnError
         $group_code= '0';
 
         if( is_null($row[2]) ){
-            $product_id=null;
+            $product_id=0;
 
         }else{
             $product_id= Product::where('barcode', $row[2])->pluck('id')->first();

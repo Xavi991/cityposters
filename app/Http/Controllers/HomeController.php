@@ -119,7 +119,7 @@ class HomeController extends Controller
                 ->get();
 
 
-        $sites= DB::table('offer_headers as h') //STRING_AGG(s.description, ',')
+        $sites= DB::table('offer_headers as h') 
             ->join('offer_sites as m', 'm.offer_header_id', '=', 'h.id')
             ->join('sites as s', 'm.site_id', '=', 's.id')
             ->select(DB::raw("h.id, GROUP_CONCAT(s.description) as description2"))
@@ -312,10 +312,10 @@ class HomeController extends Controller
             ->where('o.group_tittle', 'like', 'T')
             ->get();
 
-        if(count($groups)>0){ //STRING_AGG(p.barcode, ',')  GROUP_CONCAT(p.barcode)
+        if(count($groups)>0){ 
             $ean_group= DB::table('offer_posters as o')
             ->join('products as p', 'o.product_id', '=', 'p.id')
-            ->select(DB::raw("o.group, GROUP_CONCAT(o.group_code) as ean"))
+            ->select(DB::raw("o.group, STRING_AGG(o.group_code, '/') as ean"))
             ->where('o.offer_header_id',$offer_id)
             ->where('o.group', 'not like', '0')
             ->groupBy('o.group')->get();
@@ -373,7 +373,7 @@ class HomeController extends Controller
         if(count($groups)>0){ //GROUP_CONCAT(p.barcode)
             $ean_group= DB::table('offer_posters as o')
             ->join('products as p', 'o.product_id', '=', 'p.id')
-            ->select(DB::raw("o.group, GROUP_CONCAT(o.group_code) as ean"))
+            ->select(DB::raw("o.group, STRING_AGG(o.group_code, '/') as ean"))
             ->where('o.offer_header_id',$offer_id)
             ->where('o.group', 'not like', '0')
             ->groupBy('o.group')->get();
