@@ -53,3 +53,4 @@ Route::post('/selected','HomeController@activeDesign')->name('selected.design');
 Route::delete('/delete-offer/{id}','HomeController@destroyOffer');
 Route::resource('/offerPoster','OfferPosterController')->only('update','store');
 Route::get('/delete-header/{id}', 'HomeController@destroyAll')->name('destroy.header');
+Route::post('/downloaded', 'HomeController@downloaded');

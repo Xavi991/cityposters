@@ -1,5 +1,5 @@
  <!-- Card -->
-<div class="card">
+<div class="card main-cards">
     <div class="card-header">
         Seleccionar Diseño
         <i class="fa fa-plus-circle add-custom" data-toggle="modal" data-target="#add-design">

@@ -1,4 +1,4 @@
- <div class="card">
+ <div class="card main-cards">
     <div class="card-header">Crear una oferta</div>
 
     <div class="card-body">

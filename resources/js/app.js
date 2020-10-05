@@ -8,6 +8,8 @@ window.Vue = require('vue');
 
 Vue.component('table-component', require('./components/TableComponent.vue').default);
 Vue.component('guest-table-component', require('./components/GuestTableComponent.vue').default);
+Vue.component('download-btn-component', require('./components/DownloadBtnComponent.vue').default);
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

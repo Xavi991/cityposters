@@ -46,13 +46,15 @@
 						      </div>
 						    </div>
 						</div>
-					</a>
+					</a> 
 
-					<a href="{{ route('download.poster',['offer_id' => $item['id']]) }}">
-						<div class=".delete-offer-container delete-offer-container-pdf">
-					    	<img src="{{ asset('img/pdf.png') }}">
-					    </div>
-					</a>
+					<download-btn-component
+						parent-route="{{ route('download.poster',['offer_id' => $item['id']]) }}"
+						pdf-image="{{ asset('img/pdf.png') }}"
+					>
+						
+					</download-btn-component>
+
 				</div>
 		    @endforeach
 

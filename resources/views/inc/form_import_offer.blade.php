@@ -1,4 +1,4 @@
- <div class="card">
+ <div class="card main-cards">
     <div class="card-header">Importar oferta/s</div>
 
     <div class="card-body">

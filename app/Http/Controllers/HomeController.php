@@ -20,6 +20,7 @@ use App\Imports\OffersImport;
 use App\Site;
 use App\OfferHeader;
 use App\OfferSite;
+use App\Printed_Offer;
 
 use App\Http\Resources\Offer_Poster as Offer_PosterResources;
 use App\Http\Resources\Offer_PosterCollection;
@@ -111,7 +112,7 @@ class HomeController extends Controller
         
     }
 
-    public function getOffersPage(){    //NEW
+    public function getOffersPage(){    //NEW GROUP
       
         $offers= DB::table('offer_headers as h') 
                 ->select(DB::raw('h.id, h.date_from,h.date_to,h.description,h.slug'))
@@ -122,7 +123,7 @@ class HomeController extends Controller
         $sites= DB::table('offer_headers as h') 
             ->join('offer_sites as m', 'm.offer_header_id', '=', 'h.id')
             ->join('sites as s', 'm.site_id', '=', 's.id')
-            ->select(DB::raw("h.id, GROUP_CONCAT(s.description) as description2"))
+            ->select(DB::raw("h.id, STRING_AGG(s.description, '/') as description2"))
             ->where('h.date_to', '>=', date("Y-m-d"))
             ->groupBy('h.id')
             ->get();
@@ -285,7 +286,7 @@ class HomeController extends Controller
         
     }
 
-    public function streamPdf($offer_id){
+    public function streamPdf($offer_id){  //GROUP
         $collection= null;
         $ean_group= null;
 
@@ -315,7 +316,7 @@ class HomeController extends Controller
         if(count($groups)>0){ 
             $ean_group= DB::table('offer_posters as o')
             ->join('products as p', 'o.product_id', '=', 'p.id')
-            ->select(DB::raw("o.group, STRING_AGG(o.group_code, '/') as ean"))
+            ->select(DB::raw("o.group, STRING_AGG(o.group_code, '/-') as ean"))
             ->where('o.offer_header_id',$offer_id)
             ->where('o.group', 'not like', '0')
             ->groupBy('o.group')->get();
@@ -373,7 +374,7 @@ class HomeController extends Controller
         if(count($groups)>0){ //GROUP_CONCAT(p.barcode)
             $ean_group= DB::table('offer_posters as o')
             ->join('products as p', 'o.product_id', '=', 'p.id')
-            ->select(DB::raw("o.group, STRING_AGG(o.group_code, '/') as ean"))
+            ->select(DB::raw("o.group, STRING_AGG(o.group_code, '/-') as ean"))
             ->where('o.offer_header_id',$offer_id)
             ->where('o.group', 'not like', '0')
             ->groupBy('o.group')->get();
@@ -384,6 +385,43 @@ class HomeController extends Controller
         }
 
         $pdf = PDF::loadView('export.pdf', compact('image','collection','ean_group'));
-        return $pdf->download("OFERTAS.pdf");
+        return $pdf->download("OFERTAS.pdf");//GROUP//GROUP
+    }
+
+    public function downloaded(Request $request){
+        $contador= 0;
+        $user_id= Auth::user()->id;
+        $site_id= Auth::user()->site_id;
+
+        $doExist= Printed_Offer::where([
+            ['printed_date', date("Y-m-d")],
+            ['user_id', '=', $user_id],
+            ['site_id', '=', $site_id]
+        ])->first();
+
+        if(is_null($doExist)){
+            $printed= new Printed_Offer;
+
+            $printed->printed_date  = date("Y-m-d");
+            $printed->quantity      = $request->add;
+            $printed->user_id       = $user_id;
+            $printed->site_id       = $site_id;
+
+            $printed->save();
+
+        }else{
+
+            $contador= $doExist->quantity + (int) $request->add;
+
+            DB::table('printed_offers')
+                ->where([
+                    ['printed_date', date("Y-m-d")],
+                    ['user_id', '=', $user_id],
+                    ['site_id', '=', $site_id]
+                ])
+                ->update(['quantity' => $contador]);
+        }
+
+        return 'SUCCESS';
     }
 }

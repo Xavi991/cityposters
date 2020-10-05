@@ -16,6 +16,7 @@ class CreatePrintedOffersTable extends Migration
         Schema::create('printed_offers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->dateTime('printed_date');
+            $table->smallInteger('quantity')->default(0);
 
             $table->bigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');

@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('full_name');
             $table->string('password');
             $table->string('identity_number',15)->nullable();
+            $table->string('role')->nullable();
 
             $table->bigInteger('site_id');
             $table->foreign('site_id')->references('id')->on('sites');

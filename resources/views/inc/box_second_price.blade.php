@@ -101,7 +101,7 @@
 	 	</span>
 
 	 	<span class="take-two-fifth-design">
-	 		LLEVA LAS DOS POR:
+	 		LLEVA LOS DOS POR:
 	 		<span final-price-fifth-design>
 		 		GS. {{number_format($precioFinal, 0, "", ".")}}
 		 	</span>
@@ -136,7 +136,7 @@
 	 	</span>
 
 	 	<span class="take-two-fifth-design">
-	 		LLEVA LAS DOS POR:
+	 		LLEVA LOS DOS POR:
 	 		<span final-price-fifth-design>
 		 		GS. {{number_format($precioFinal, 0, "", ".")}}
 		 	</span>
